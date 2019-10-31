@@ -7,9 +7,10 @@ namespace Pool\Controller;
  */
 class FrontController
 {
-    const DEF_CONTROLLER = 'Notes';
-    const DEF_ACTION = 'display';
+    const DEF_CONTROLLER = self::CONTROLLER_NAMEPACE . 'NotesController';
+    const DEF_ACTION = 'index';
     const BASE_PATH = '';
+    const CONTROLLER_NAMEPACE = 'Pool\\Controller\\';
 
     /** @var string */
     private $controller = self::DEF_CONTROLLER;
@@ -42,12 +43,25 @@ class FrontController
      */
     private function parseUri(): void
     {
-        $uri = trim(parse_url($_REQUEST['uri'], PHP_URL_PATH), '/');
+        $uri = trim(parse_url($_REQUEST['uri'] ?? '', PHP_URL_PATH), '/');
+
         if ($uri === self::BASE_PATH) {
             $this->setController(self::DEF_CONTROLLER);
             $this->setAction(self::DEF_ACTION);
-        } else {
-            // todo
+            return;
+        }
+
+        $uriParts = explode('/', $uri, 3);
+        if (isset($uriParts[0])) {
+            $this->setController($uriParts[0]);
+        }
+
+        if (isset($uriParts[1])) {
+            $this->setAction($uriParts[1]);
+        }
+
+        if (isset($uriParts[2])) {
+            $this->setParams(explode('/', $uriParts[3]));
         }
     }
 
@@ -57,7 +71,7 @@ class FrontController
      */
     public function setController(string $controller): void
     {
-        $controller = 'Controller\\' . ucfirst(strtolower($controller)) . 'Controller';
+        $controller = self::CONTROLLER_NAMEPACE . ucfirst(strtolower($controller)) . 'Controller';
         if (!class_exists($controller)) {
             header("HTTP/2.2 404 Not Found");
             echo '<h1>404 Not Found</h1>';
