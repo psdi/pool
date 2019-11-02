@@ -20,6 +20,7 @@ class Request
     {
         $obj = new static();
         $obj->httpMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+        // originally: trim(parse_url($_REQUEST['uri'] ?? '', PHP_URL_PATH), '/');
         $obj->requestUri = trim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
 
         foreach ($_REQUEST as $key => $value) {
@@ -56,5 +57,21 @@ class Request
     public function setAttribute(string $identifier, $value = null): void
     {
         $this->attributes[$identifier] = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHttpMethod(): string
+    {
+        return $this->httpMethod;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestUri(): string
+    {
+        return $this->requestUri;
     }
 }

@@ -24,12 +24,13 @@ class FrontController
     private $params = [];
     /** @var ContainerInterface */
     private $container;
-    /** @var Request */
+    /** @var Request|null */
     private $request;
 
     public function __construct(ContainerInterface $container, array $options = [])
     {
         $this->container = $container;
+        $this->request = $container->has(Request::class) ? $container->get(Request::class) : null;
 
         if (empty($options)) {
             $this->parseUri();
@@ -53,7 +54,8 @@ class FrontController
      */
     private function parseUri(): void
     {
-        $uri = trim(parse_url($_REQUEST['uri'] ?? '', PHP_URL_PATH), '/');
+        // TODO: throw an error instead of falling back on an empty string
+        $uri = $this->request !== null ? $this->request->getRequestUri() : '';
 
         if ($uri === self::BASE_PATH) {
             $this->setController(self::DEF_CONTROLLER);
@@ -100,8 +102,9 @@ class FrontController
     {
         $reflection = new \ReflectionClass($this->controller);
         if (!$reflection->hasMethod($action)) {
-            header("<h1>404 Not Found</h1>");
-            echo 'The request page could not be found.';
+            header("HTTP/2.2 400 Bad Request");
+            echo '<h1>400 Bad Request</h1>';
+            echo 'The requested page was not found.';
             exit();
         }
 
@@ -127,7 +130,7 @@ class FrontController
     {
         $factories = $this->container->get('config')['factories'] ?? [];
         if (empty($factories)) {
-            throw new \RuntimeException("No specified 'factories' found in config.php");
+            throw new \RuntimeException("No specified 'factories' list found in config.php.");
         }
 
         $assignedFactory = key_exists($this->controller, $factories) ? $factories[$this->controller] : '';
