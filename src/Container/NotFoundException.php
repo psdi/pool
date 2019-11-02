@@ -6,5 +6,5 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class NotFoundException extends ContainerException implements NotFoundExceptionInterface
 {
-    protected static $message = 'A dependency with the id "{id}" was not found.';
+    protected $message = 'A dependency with the id "{id}" was not found.';
 }
