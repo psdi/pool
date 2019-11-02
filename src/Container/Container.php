@@ -15,11 +15,7 @@ class Container implements ContainerInterface
     private $dependencies = [];
 
     /**
-     * Retrieve a dependency via its id
-     * 
-     * @param string|mixed $id
-     * @throws NotFoundExceptionInterface
-     * @return mixed
+     * {@inheritDoc}
      */
     public function get($id)
     {
@@ -31,10 +27,7 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Returns true if container contains dependency
-     * 
-     * @param string|mixed $id
-     * @return bool
+     * {@inheritDoc}
      */
     public function has($id): bool
     {

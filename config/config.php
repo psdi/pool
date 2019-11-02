@@ -1,10 +1,15 @@
 <?php
 
+use Pool\Controller\Factory\AbstractControllerFactory;
+
 return [
     'basepath' => dirname(__FILE__, 2) . '/',
-    'twig_paths' => [
+    'templates' => [
         'layout' => '/layout',
         'index' => '/index',
         'shared' => '/shared',
+    ],
+    'factories' => [
+        \Pool\Controller\NotesController::class => AbstractControllerFactory::class,
     ],
 ];

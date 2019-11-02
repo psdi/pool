@@ -10,6 +10,7 @@ return function ($config) {
 
     $container->set(Request::class, Request::initialize());
     $container->set(Environment::class, $twig);
+    $container->set('config', $config);
 
     return $container;
 };

@@ -5,7 +5,7 @@ namespace Pool\Http;
 class Request
 {
     /** @var array */
-    private $attributes;
+    private $attributes = [];
     /** @var string */
     private $httpMethod;
     /** @var string */
@@ -20,7 +20,7 @@ class Request
     {
         $obj = new static();
         $obj->httpMethod = $_SERVER['REQUEST_METHOD'] ?? '';
-        $obj->requestUri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $obj->requestUri = trim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
 
         foreach ($_REQUEST as $key => $value) {
             $obj->setAttribute($key, $value);
