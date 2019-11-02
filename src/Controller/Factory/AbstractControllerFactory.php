@@ -58,7 +58,7 @@ class AbstractControllerFactory
     protected function canCreate($controllerType, ContainerInterface $container): bool
     {
         return in_array($controllerType, $this->allowedControllers)
-            && $controllerType instanceof AbstractController
+            && is_subclass_of($controllerType, AbstractController::class)
             && $container->has(Environment::class)
             && $container->has(Request::class);
     }

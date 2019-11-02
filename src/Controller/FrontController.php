@@ -2,6 +2,10 @@
 
 namespace Pool\Controller;
 
+use Pool\Controller\Factory\AbstractControllerFactory;
+use Pool\Http\Request;
+use Psr\Container\ContainerInterface;
+
 /**
  * Based on https://github.com/awmpietro/php-front-controller
  */
@@ -17,10 +21,16 @@ class FrontController
     /** @var string */
     private $action = self::DEF_ACTION;
     /** @var array */
-    private $params;
+    private $params = [];
+    /** @var ContainerInterface */
+    private $container;
+    /** @var Request */
+    private $request;
 
-    public function __construct(array $options = [])
+    public function __construct(ContainerInterface $container, array $options = [])
     {
+        $this->container = $container;
+
         if (empty($options)) {
             $this->parseUri();
         } else {
@@ -108,16 +118,32 @@ class FrontController
     }
 
     /**
-     * Create an instance of the controller and run action
+     * Look for controller's factory in the config file, instantiates this,
+     * and through it create the controller and call the specified action
+     *
+     * @throws \RuntimeException
      */
     public function run()
     {
+        $factories = $this->container->get('config')['factories'] ?? [];
+        if (empty($factories)) {
+            throw new \RuntimeException("No specified 'factories' found in config.php");
+        }
+
+        $assignedFactory = key_exists($this->controller, $factories) ? $factories[$this->controller] : '';
+        if (!$assignedFactory) {
+            throw new \RuntimeException('No given factory for ' . $this->controller);
+        }
+
+        /** @var AbstractControllerFactory $factory */
+        $factory = new $assignedFactory(array_keys($factories));
+
         call_user_func_array(
             [
-                new $this->controller,
+                $factory->create($this->controller, $this->container),
                 $this->action
             ],
-            $this->params ?? []
+            $this->params
         );
     }
 }
