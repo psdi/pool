@@ -3,12 +3,10 @@
 namespace Pool\Container;
 
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * PSR-11 compliant container class
- * Inspired by:
- *  - https://github.com/AcclimateContainer/acclimate-container
+ * Inspired by: https://github.com/AcclimateContainer/acclimate-container
  */
 class Container implements ContainerInterface
 {
@@ -42,6 +40,9 @@ class Container implements ContainerInterface
      */
     public function set($identifier, $dependency): void
     {
+        if (is_object($dependency) && get_class($dependency) !== $identifier) {
+            throw new \RuntimeException('Use class name as identifier for ' . get_class($dependency));
+        }
         $this->dependencies[$identifier] = $dependency;
     }
 }

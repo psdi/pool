@@ -10,6 +10,8 @@ return [
         'shared' => '/shared',
     ],
     'factories' => [
-        \Pool\Controller\NotesController::class => AbstractControllerFactory::class,
+        AbstractControllerFactory::class => [
+            \Pool\Controller\NotesController::class,
+        ],
     ],
 ];

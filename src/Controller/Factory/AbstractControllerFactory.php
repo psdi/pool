@@ -32,6 +32,7 @@ class AbstractControllerFactory
      */
     public function create($controllerType, ContainerInterface $container)
     {
+        // TODO: potentially remove this if-block if you always check beforehand anyway
         if (!$this->canCreate($controllerType, $container)) {
             throw new \RuntimeException('Unrecognized controller ' . $controllerType);
         }
@@ -55,7 +56,7 @@ class AbstractControllerFactory
      * @param ContainerInterface $container
      * @return bool
      */
-    protected function canCreate($controllerType, ContainerInterface $container): bool
+    public function canCreate($controllerType, ContainerInterface $container): bool
     {
         return in_array($controllerType, $this->allowedControllers)
             && is_subclass_of($controllerType, AbstractController::class)

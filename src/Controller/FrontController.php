@@ -133,17 +133,30 @@ class FrontController
             throw new \RuntimeException("No specified 'factories' list found in config.php.");
         }
 
-        $assignedFactory = key_exists($this->controller, $factories) ? $factories[$this->controller] : '';
-        if (!$assignedFactory) {
-            throw new \RuntimeException('No given factory for ' . $this->controller);
+        // Get factory for $this->controller as stated in config/config.php
+        $fInstance = false;
+        foreach (array_keys($factories) as $factoryName) {
+            if (!$this->container->has($factoryName)) {
+                continue;
+            }
+
+            /** @var AbstractControllerFactory $fInstance */
+            $fInstance = $this->container->get($factoryName);
+
+            if ($fInstance->canCreate($this->controller, $this->container)) {
+                break;
+            }
+
+            $fInstance = false;
         }
 
-        /** @var AbstractControllerFactory $factory */
-        $factory = new $assignedFactory(array_keys($factories));
+        if (!$fInstance) {
+            throw new \RuntimeException('Could not find a factory for ' . $this->controller);
+        }
 
         call_user_func_array(
             [
-                $factory->create($this->controller, $this->container),
+                $fInstance->create($this->controller, $this->container),
                 $this->action
             ],
             $this->params
