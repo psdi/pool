@@ -63,17 +63,17 @@ class FrontController
             return;
         }
 
-        $uriParts = explode('/', $uri, 3);
-        if (isset($uriParts[0])) {
-            $this->setController($uriParts[0]);
+        list($controller, $action, $params) = array_pad(explode('/', $uri, 3), 3, '');
+        if (!empty($controller)) {
+            $this->setController($controller);
         }
 
-        if (isset($uriParts[1])) {
-            $this->setAction($uriParts[1]);
+        if (!empty($action)) {
+            $this->setAction($action);
         }
 
-        if (isset($uriParts[2])) {
-            $this->setParams(explode('/', $uriParts[3]));
+        if (!empty($params)) {
+            $this->setParams(explode('/', $params));
         }
     }
 

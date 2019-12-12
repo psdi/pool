@@ -14,4 +14,11 @@ return [
             \Pool\Controller\NotesController::class,
         ],
     ],
+    'db' => [
+        'driver' => 'mysql',
+        'host' => 'localhost',
+        'dbname' => 'pool',
+        'user' => 'psdi',
+        'pass' => 'H4llucinat10n',
+    ]
 ];

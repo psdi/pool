@@ -6,7 +6,9 @@ class NotesController extends AbstractController
 {
     public function index()
     {
-        echo 'Hi! :-)';
+        echo $this->renderer->render('@index/main.html.twig', [
+            'items' => [],
+        ]);
         exit();
     }
 }
