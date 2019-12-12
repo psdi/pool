@@ -24,5 +24,30 @@ return function ($config) {
         $container->set($factoryName, $cFactory);
     }
 
+    $pdo = initializePDO($config['db'] ?? []);
+    $container->set(PDO::class, $pdo);
+
     return $container;
 };
+
+function initializePDO(array $dbData) {
+    $allKeys = array_diff(
+        array_keys($dbData),
+        ['driver', 'host', 'dbname', 'user', 'pass']
+    );
+    
+    if (count($allKeys) !== 0) {
+        throw new RuntimeException('All database details (driver, host, dbname, user, pass) have to be supplied in `config.php`.');
+    }
+
+    list('driver' => $driver, 'host' => $host, 'dbname' => $dbname, 'user' => $user, 'pass' => $pass) = $dbData;
+
+    try {
+        $pdo = new PDO("$driver:host=$host;dbname=$dbname", $user, $pass);
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+        exit();
+    }
+
+    return $pdo;
+}
