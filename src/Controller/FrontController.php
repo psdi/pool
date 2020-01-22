@@ -121,42 +121,31 @@ class FrontController
     }
 
     /**
-     * Look for controller's factory in the config file, instantiates this,
+     * Look for controller's factory in the config file, instantiate this,
      * and through it create the controller and call the specified action
-     *
-     * @throws \RuntimeException
+     * 
+     * @throws \RuntimException
      */
     public function run()
     {
-        $factories = $this->container->get('config')['factories'] ?? [];
-        if (empty($factories)) {
+        $config = new ConfigProvider();
+        $factoryList = $config()['factories'] ?? [];
+        if (empty($factoryList)) {
             throw new \RuntimeException("No specified 'factories' list found in config.php.");
         }
 
         // Get factory for $this->controller as stated in config/config.php
-        $fInstance = false;
-        foreach (array_keys($factories) as $factoryName) {
-            if (!$this->container->has($factoryName)) {
-                continue;
-            }
+        $factory = $factoryList[$this->controller] ?? '';
 
-            /** @var AbstractControllerFactory $fInstance */
-            $fInstance = $this->container->get($factoryName);
-
-            if ($fInstance->canCreate($this->controller, $this->container)) {
-                break;
-            }
-
-            $fInstance = false;
+        if (!$factory || !class_exists($factory)) {
+            throw new \RuntimeException("Missing factory for controller $this->controller.");
         }
 
-        if (!$fInstance) {
-            throw new \RuntimeException('Could not find a factory for ' . $this->controller);
-        }
+        $instance = new $factory;
 
         call_user_func_array(
             [
-                $fInstance->create($this->controller, $this->container),
+                $instance($this->container),
                 $this->action
             ],
             $this->params

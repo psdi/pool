@@ -1,7 +1,9 @@
 <?php
 
+use Pool\TableGateway\TableGateway;
 use Pool\Container\Container;
-use Pool\Controller\Factory\AbstractControllerFactory;
+use Pool\Core\Model\NoteTable;
+use Pool\Core\Model\TextTable;
 use Pool\Http\Request;
 use Twig\Environment;
 
@@ -14,18 +16,12 @@ return function ($config) {
     $container->set(Environment::class, $twig);
     $container->set('config', $config);
 
-    foreach ($factories as $factoryName => $controllers) {
-        if ($container->has($factoryName) || !class_exists($factoryName)) {
-            continue;
-        }
-
-        /** @var AbstractControllerFactory $cFactory */
-        $cFactory = new $factoryName($controllers);
-        $container->set($factoryName, $cFactory);
-    }
-
     $pdo = initializePDO($config['db'] ?? []);
     $container->set(PDO::class, $pdo);
+    $notesGateway = new TableGateway($pdo, 'notes');
+    $textsGateway = new TableGateway($pdo, 'notes_texts');
+    $container->set(NoteTable::class, new NoteTable($notesGateway));
+    $container->set(TextTable::class, new TextTable($textsGateway));
 
     return $container;
 };
@@ -42,8 +38,14 @@ function initializePDO(array $dbData) {
 
     list('driver' => $driver, 'host' => $host, 'dbname' => $dbname, 'user' => $user, 'pass' => $pass) = $dbData;
 
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
+
     try {
-        $pdo = new PDO("$driver:host=$host;dbname=$dbname", $user, $pass);
+        $pdo = new PDO("$driver:host=$host;dbname=$dbname", $user, $pass, $options);
     } catch (PDOException $e) {
         echo $e->getMessage();
         exit();
