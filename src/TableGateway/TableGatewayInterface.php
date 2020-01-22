@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\TableGateway;
+namespace Pool\TableGateway;
 
 /**
  * Entity model implementation

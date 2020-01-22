@@ -2,8 +2,8 @@
 
 namespace Pool\Core\Model;
 
-use Core\TableGateway\TableGatewayInterface;
 use Pool\Core\Object\Text;
+use Pool\TableGateway\TableGatewayInterface;
 use RuntimeException;
 
 class TextTable

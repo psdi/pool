@@ -1,5 +1,9 @@
 <?php
 
+    // https://github.com/jpfuentes2/php-activerecord
+    // https://martinfowler.com/eaaCatalog/activeRecord.html
+    // https://knockoutjs.com/
+    // https://github.com/mattghall
 namespace Pool;
 
 /**
@@ -39,6 +43,17 @@ class Autoloader
     public function __construct(...$absolutePaths)
     {
         $this->absolutePaths = $absolutePaths;
+    }
+
+    /**
+     * For testing purposes only
+     */
+    public function get()
+    {
+        return [
+            'prefixes' => $this->prefixes,
+            'absolutes' => $this->absolutePaths,
+        ];
     }
 
     public function register()
@@ -88,8 +103,8 @@ class Autoloader
     {
         $prevNamespacePrefix = $this->groupNamespacePrefix;
         $prevBaseDirPrefix = $this->groupBaseDirPrefix;
-        $this->groupNamespacePrefix = rtrim($prefix, '\\') . '\\';
-        $this->groupBaseDirPrefix = rtrim($baseDir, '/') . '/';
+        $this->groupNamespacePrefix .= rtrim($prefix, '\\') . '\\';
+        $this->groupBaseDirPrefix .= rtrim($baseDir, '/') . '/';
         $callable($this);
         $this->groupNamespacePrefix = $prevNamespacePrefix;
         $this->groupBaseDirPrefix = $prevBaseDirPrefix;

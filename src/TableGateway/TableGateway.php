@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\TableGateway;
+namespace Pool\TableGateway;
 
 use PDO;
 
@@ -53,6 +53,51 @@ class TableGateway implements TableGatewayInterface
         return $rows;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function insert(array $data)
+    {
+        $query = "INSERT INTO $this->table";
+        list('cols' => $columns, 'vals' => $values) = $this->buildInsertions($data);
+        $query .= " $columns VALUES $values";
+
+        $stmt = $this->pdo->prepare($query);
+        foreach ($data as $k => $v) {
+            $stmt->bindParam(":$k", $v);
+        }
+        $stmt->execute();
+
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function update(array $data, array $where)
+    {
+        $query = "UPDATE $this->table SET" 
+            . $this->buildAssignments($data)
+            . $this->buildCondition($where);
+
+        $stmt = $this->pdo->prepare($query);
+        foreach (array_merge($data, $where) as $key => $value) {
+            $stmt->bindParam(":$key", $value);
+        }
+        $stmt->execute();
+
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function delete(array $where = [])
+    {
+        // todo!
+        exit;
+    }
+
     private function buildCondition(array $params): string
     {
         foreach (array_keys($params) as $column) {
@@ -60,5 +105,29 @@ class TableGateway implements TableGatewayInterface
         }
 
         return ' WHERE ' . implode(' AND ', $placeholderPairs);
+    }
+
+    private function buildInsertions(array $params)
+    {
+        $cols = [];
+        $vals = [];
+        foreach (array_keys($params) as $column) {
+            $vals[] = ':' . $column;
+            $cols[] = "$this->table.$column";
+        }
+
+        return [
+            'cols' => '(' . implode(', ', $cols) . ')',
+            'vals' => '(' . implode(', ', $vals) . ')',
+        ];
+    }
+
+    private function buildAssignments(array $params)
+    {
+        $assigns = [];
+        foreach (array_keys($params) as $column) {
+            $assigns[] = $this->table . '.' . $column . ' = ' . ':' . $column;
+        }
+        return implode(', ', $assigns);
     }
 }
