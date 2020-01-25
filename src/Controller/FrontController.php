@@ -2,7 +2,6 @@
 
 namespace Pool\Controller;
 
-use Pool\Controller\Factory\AbstractControllerFactory;
 use Pool\Http\Request;
 use Psr\Container\ContainerInterface;
 

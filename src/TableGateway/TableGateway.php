@@ -94,8 +94,17 @@ class TableGateway implements TableGatewayInterface
      */
     public function delete(array $where = [])
     {
-        // todo!
-        exit;
+        // Prevent deletion of all items
+        if (count($where) === 0) {
+            exit;
+        }
+
+        $query = "DELETE FROM $this->table" . $this->buildCondition($where);
+        $stmt = $this->pdo->prepare($query);
+        foreach ($where as $key => $value) {
+            $stmt->bindParam(":$key", $value);
+        }
+        $stmt->execute();
     }
 
     private function buildCondition(array $params): string

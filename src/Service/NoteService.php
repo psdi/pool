@@ -18,9 +18,6 @@ class NoteService
         $this->textTable = $textTable;
     }
 
-    // https://stackoverflow.com/questions/27493302/how-should-services-communicate-between-each-other/27495720#27495720
-    // https://stackoverflow.com/questions/10675512/where-do-i-put-a-database-query-in-mvc
-    // https://martinfowler.com/eaaDev/uiArchs.html
     public function saveNote()
     {
         // validate data
