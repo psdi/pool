@@ -38,7 +38,7 @@ class Request
      * @param mixed|null $default Fallback value
      * @return mixed
      */
-    public function getAttribute(string $identifier, $default = null): mixed
+    public function getAttribute(string $identifier, $default = null)
     {
         if (key_exists($identifier, $this->attributes)) {
             return $this->attributes[$identifier];

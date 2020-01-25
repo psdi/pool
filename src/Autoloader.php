@@ -1,9 +1,5 @@
 <?php
 
-    // https://github.com/jpfuentes2/php-activerecord
-    // https://martinfowler.com/eaaCatalog/activeRecord.html
-    // https://knockoutjs.com/
-    // https://github.com/mattghall
 namespace Pool;
 
 /**
@@ -101,11 +97,21 @@ class Autoloader
      */
     public function addNamespaceGroup($prefix, $baseDir, $callable)
     {
+        // Add topmost namespace
+        $this->addNamespace($prefix, $baseDir);
+
+        // Preserve previous prefixes
         $prevNamespacePrefix = $this->groupNamespacePrefix;
         $prevBaseDirPrefix = $this->groupBaseDirPrefix;
+
+        // Append given prefixes to existing ones
         $this->groupNamespacePrefix .= rtrim($prefix, '\\') . '\\';
         $this->groupBaseDirPrefix .= rtrim($baseDir, '/') . '/';
+
+        // Run callable
         $callable($this);
+
+        // Revert prefixes
         $this->groupNamespacePrefix = $prevNamespacePrefix;
         $this->groupBaseDirPrefix = $prevBaseDirPrefix;
     }
