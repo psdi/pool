@@ -41,17 +41,6 @@ class Autoloader
         $this->absolutePaths = $absolutePaths;
     }
 
-    /**
-     * For testing purposes only
-     */
-    public function get()
-    {
-        return [
-            'prefixes' => $this->prefixes,
-            'absolutes' => $this->absolutePaths,
-        ];
-    }
-
     public function register()
     {
         spl_autoload_register([$this, 'loadClass']);
