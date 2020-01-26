@@ -86,11 +86,21 @@ class Autoloader
      */
     public function addNamespaceGroup($prefix, $baseDir, $callable)
     {
+        // Add topmost namespace
+        $this->addNamespace($prefix, $baseDir);
+
+        // Preserve previous prefixes
         $prevNamespacePrefix = $this->groupNamespacePrefix;
         $prevBaseDirPrefix = $this->groupBaseDirPrefix;
-        $this->groupNamespacePrefix = rtrim($prefix, '\\') . '\\';
-        $this->groupBaseDirPrefix = rtrim($baseDir, '/') . '/';
+
+        // Append given prefixes to existing ones
+        $this->groupNamespacePrefix .= rtrim($prefix, '\\') . '\\';
+        $this->groupBaseDirPrefix .= rtrim($baseDir, '/') . '/';
+
+        // Run callable
         $callable($this);
+
+        // Revert prefixes
         $this->groupNamespacePrefix = $prevNamespacePrefix;
         $this->groupBaseDirPrefix = $prevBaseDirPrefix;
     }

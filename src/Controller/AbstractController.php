@@ -23,4 +23,15 @@ abstract class AbstractController
         $this->renderer = $renderer;
         $this->request = $request;
     }
+
+    /**
+     * Retrieve a parameter from Request; return null if unavailable
+     * 
+     * @param string $name Parameter name
+     * @param mixed|null $default Default return value
+     */
+    public function getParam(string $name, $default = null)
+    {
+        return $this->request->getAttribute($name, $default);
+    }
 }
