@@ -27,8 +27,8 @@ class TableGateway implements TableGatewayInterface
             $query .= $this->buildCondition($where);
         }
 
-        if (strlen($orderBy)) {
-            $query .= " ORDER BY :orderBy :direction";
+        if ($orderBy && in_array(strtoupper($direction), ['ASC', 'DESC'])) {
+            $query .= " ORDER BY $orderBy $direction";
         }
 
         $stmt = $this->pdo->prepare($query);
@@ -39,10 +39,6 @@ class TableGateway implements TableGatewayInterface
             }
         }
 
-        if (strlen($orderBy)) {
-            $stmt->bindParam(':orderBy', $orderBy);
-            $stmt->bindParam(':direction', strtoupper($direction));
-        }
         $stmt->execute();
 
         $rows = [];

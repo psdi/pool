@@ -19,9 +19,11 @@ class NotesController extends AbstractController
 
     public function index()
     {
-        echo $this->renderer->render('@index/main.html.twig', [
-            'items' => [],
+        $items = $this->service->select();
+
+        echo $this->renderer->render('index.twig', [
+            'items' => $items,
         ]);
-        exit();
+        exit;
     }
 }

@@ -1,4 +1,6 @@
 {
+    "name": "psdi/pool",
+    "description": "Notes application",
     "require": {
         "twig/twig": "^2.0",
         "psr/container": "^1.0"

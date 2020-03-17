@@ -18,7 +18,7 @@ class NoteFactory
 
         $note->setId($data['id'] ?? -1);
         $note->setTitle($data['title'] ?? '');
-        $text = TextFactory::create(self::normalizeText($data));
+        $text = TextFactory::create($data['text'] ?? []);
         $note->setText($text);
         if (isset($data['created'])) {
             $note->setCreated(new \DateTime($data['created']));
@@ -29,23 +29,5 @@ class NoteFactory
         $note->setSubmitted((bool) ($data['submitted'] ?? false));
 
         return $note;
-    }   
-
-    /**
-     * Alter text structure format for TextFactory
-     * 
-     * @param array $data From `::create`
-     * @return array
-     */
-    public static function normalizeText(array $data = []): array
-    {
-        if (is_array($data['text'])) {
-            return $data['text'];
-        }
-
-        return [
-            'id' => $data['text.id'] ?? null,
-            'text' => $data['text'] ?? '',
-        ];
     }
 }
