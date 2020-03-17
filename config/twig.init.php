@@ -8,5 +8,12 @@ return function($config) {
     foreach ($paths as $namespace => $path) {
         $loader->addPath($templateDir . $path, $namespace);
     }
-    return new \Twig\Environment($loader);
+
+    // workaround for Twig function 'asset'
+    $twig = new \Twig\Environment($loader);
+    $twig->addFunction(new \Twig\TwigFunction('asset', function ($asset) {
+        return sprintf('../public/%s', ltrim($asset, '/'));
+    }));
+
+    return $twig;
 };

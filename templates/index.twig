@@ -1,0 +1,40 @@
+{% extends 'base.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('js/index.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+    {% include 'menu.twig' %}
+
+    <div class="entries-container">
+        <div class="entries">
+            {% for item in items %}
+                <div
+                  class="pool-entry {{ loop.index0 == 0 ? 'active' -}}"
+                  data-title="{{ item.title }}"
+                  data-text="{{ item.text.text }}"
+                  data-timestamp="{{ item.created | date("d-m-Y") }}"
+                  data-id="{{ item.id }}"
+                >
+                    <div class="entry-title">
+                        {{- item.title ?: 'Untitled' -}} {# Change to untitled if title is empty #}
+                    </div>
+                    <div class="entry-preview">{{ item.text.text ?: 'Entry preview...' }}</div>
+                </div>
+            {% else %}
+                <div class="no-entries-message">No entries written yet.</div>
+            {% endfor %}
+        </div>
+        <div class="editor-container">
+            <input type="text" name="title" class="editor-title" placeholder="Untitled" /> {# fill text on load #}
+            <textarea class="editor-text" placeholder="Text here..."></textarea>
+        </div>
+    </div>
+{% endblock %}

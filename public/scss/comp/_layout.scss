@@ -1,0 +1,22 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lato", Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+main {
+    height: calc(100vh - 40px);
+}
+
+/* Footer styles */
+footer {
+    background-color: #444444;
+    color: #fff;
+    min-height: 50px;
+    padding: 15px;
+}
